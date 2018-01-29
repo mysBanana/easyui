@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/default/easyui.css">
+	 <script type="text/javascript" src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.min.js"></script>
+	 <script src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	 <script src="../easyui1.4.3/jquery-easyui-1.4.3/locale/easyui-lang-zh_CN.js"></script>
+	 <script type="text/javascript">    
+    $(function(){    
+        $('#dd').dialog({
+            title: 'hello',  //标题栏
+            width: 400,  //宽度
+            height: 200,  //高度
+            closed: false, //是否关闭（隐藏）
+            content:'<h1>hello my first EasyUI</h1>'  //显示的内容
+        });
+    });    
+    </script>
+</head>
+<body>
+	 <div id="dd">Dialog Content.</div>
+</body>
+</html>
