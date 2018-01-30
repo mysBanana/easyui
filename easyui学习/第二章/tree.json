@@ -1,20 +1,20 @@
 [{
 	"id":1,
-	"text":"Oracle���ݿ�߼���ѯ�͹���",
+	"text":"Oracle数据库高级查询和管理",
 	"children":[{
 		"id":11,
-		"text":"��һ�£���������Oracle��������",
+		"text":"第一章：初步体验Oracle管理数据",
 		"state":"closed",
 		"children":[{
 			"id":111,
-			"text":"Oracle���ݿ�ϵͳ�ص�"
+			"text":"Oracle数据库系统特点"
 		}]
 	},{
 		"id":12,
-		"text":"�ڶ��£�̽��Oracle���ڲ��ṹ",
+		"text":"第二章：探索Oracle的内部结构",
 		"children":[{
 			"id":121,
-			"text":"Oracle�������ӵĻ�������"
+			"text":"Oracle网络连接的基本管理"
 		}]
 	}]
 }]
