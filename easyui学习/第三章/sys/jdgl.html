@@ -1,0 +1,82 @@
+<script type="text/javascript">
+        var token="6339225d-b9fa-4cd9-817f-056c00db192d"
+        $(function(){
+            $("#dgz").datagrid({ url: 'http://stuapi.ysd3g.com/api/GetRoles',//调用数据接口
+                queryParams: {//传递参数
+                   token:token,
+                    orderBy: '',
+                    userName: '',
+                    beginDate: '',
+                    endDate: '',
+                    isLock: ''
+                }
+           }); 
+        });
+
+        function formatterSetRight(){
+             return `<a href="javascript:void(0)">设置</a>
+                     <a href="javascript:void(0)">修改</a>
+                     <a href="javascript:void(0)">删除</a>
+             `
+        }
+        function addInfo(){
+        	  $("#addRoles_window").window("open");
+        }
+        function clearRolesForm(){
+        	 $('#addAddRolesForm').form('clear');
+            $("#addRoles_window").window("close");
+        }
+        function submitRolesForm(){
+           var flag=$("#adduserForm").form("validate");
+           var name=$("#name").val()
+            if(flag){
+                $.post(
+                    "http://stuapi.ysd3g.com/api/CreateRole",
+                    {   
+                        name:name,
+                        token:token
+                    }, 
+                    function(addInfo){
+                        if(addInfo.success){
+                            alert("新增成功");
+                            $("#addRoles_window").window("close");
+                             $("#dgz").datagrid("reload");
+                        }                           
+                },"json");
+            }
+        }
+    </script>
+         <div id="usertbz" style="padding:5px; height:auto">
+            <div style="margin-bottom:5px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addInfo()">新增</a>
+            </div> 
+        </div>
+
+<table name="center" class="easyui-datagrid" id="dgz" title="角色列表" style="width:300;height:400"
+           data-options="rownumbers:true,singleSelect:true,pagination:true,method:'post',toolbar:'#usertb',pageSize:10">
+            <thead>
+                <tr>
+                     <th data-options="field:'Id',width:280,hidden:true">用户ID</th>
+                     <th data-options="field:'Name',width:100">角色名称</th>                
+                     <th data-options="field:'actionUpdate',width:300,title:'操作',formatter:formatterSetRight"></th>
+                </tr>
+            </thead>
+         </table>
+
+      <!--新增表单-->
+     <div id="addRoles_window" class="easyui-window" title="新增员工信息" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:500px;height:300px;padding:10px;">
+         <form id="addAddRolesForm">
+                <table cellpadding="5">
+                    <tr>
+                        <td>角色名称:</td>
+                        <td><input class="easyui-textbox" type="text" name="name" id="name" data-options="required:true"></input></td>
+                    </tr>                   
+                </table>
+         </form>
+            <div style="text-align:center;padding:5px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="submitRolesForm()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearRolesForm()">取消</a>     
+            </div>
+    </div>
+    
+      

@@ -23,60 +23,6 @@
                		 <a href="javascript:void(0)">删除</a>
              `
         }
-            //点击新增按钮
-        function addInfo(){
-            $("#adduser_window").window("open");
-        }
-        
-        //点击新增窗体保存按钮
-        function submitUserForm(){
-            var flag=$("#adduserForm").form("validate");
-            var ename=$("#ename").val();
-            var pwd=$("#pwd").val();
-            var email=$("#email").val();
-            var mtel=$("#mtel").val();
-            if(!(/^1\d{10}$/.test(mtel))){
-                alert("手机号码有误，请从新输入！");
-                return false;
-            }
-            if(flag){
-                $.post(
-                    "http://stuapi.ysd3g.com/api/CreateUser",
-                    {   
-                        loginName:ename,
-                        pwd:pwd,
-                        email:email,
-                        mtel:mtel,
-                        token:token
-                    }, 
-                    function(addInfo){
-                        if(addInfo.success){
-                            alert("新增成功");
-                            $("#adduser_window").window("close");
-                             $("#dg").datagrid("reload");
-                        }                           
-                },"json");
-            }
-            
-                
-        }
-        //保存页面取消
-        function clearUserForm(){
-            $('#adduserForm').form('clear');
-            $("#adduser_window").window("close");
-        }
-        
-        //点击查找
-        function  searchUserInfo(){         
-            var userName=$("#userName").val();
-            $('#dg').datagrid({
-                url: 'http://stuapi.ysd3g.com/api/GetUsers',                
-                queryParams: {
-                    token: token,
-                    userName:userName,
-                }
-            });
-         }
     </script>
 	<table name="center" class="easyui-datagrid" id="dg" title="用户列表" style="width:300;height:400"
            data-options="rownumbers:true,singleSelect:true,pagination:true,method:'post',toolbar:'#usertb',pageSize:10">
