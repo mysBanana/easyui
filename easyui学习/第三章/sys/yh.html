@@ -77,6 +77,78 @@
                 }
             });
          }
+
+         //锁定和解锁用户
+function formatterLockUser(value, row, index) {
+    return "<a style='cursor: pointer;' onclick='lockUser(" + index + ")'>锁定用户</a> <a style='cursor: pointer;' onclick='unlockUser(" + index + ")'>解锁用户</a>";
+}
+//设置角色权限
+function formatterSetRole(value, row, index) {
+    return "<a style='cursor: pointer;' onclick='showRoles(" + index + ")'>设置</a>";
+}
+//重置密码
+function formatterResetPassword(value, row, index) {
+    return "<a style='cursor: pointer;' onclick='resetPassword(" + index + ")'>重置密码</a>";
+}
+//操作用户
+function formatterOPUser(value, row, index) {
+    return "<a style='cursor: pointer;' onclick='updateInfo(" + index + ")'>编辑</a> <a style='cursor: pointer;' onclick='deleteInfo(" + index + ")'>删除</a>";
+}
+function updateInfo(index){
+            
+                //将当前行数据填入表单
+                 var data = $("#dg").datagrid("getData");
+                 var row = data.rows[index];
+                $("#updateuserForm").form("load",row);
+                $("#updateuser_window").window("open"); 
+            
+        }
+        function closeUserForm(){
+            $("#updateuser_window").window("close"); 
+      }
+      function submitupdateUserForm(){
+            var ename=$("#ename_1").val();
+            var email=$("#email_1").val();
+            var mtel=$("#mtel_1").val();            
+            $.post(
+                    "http://stuapi.ysd3g.com/api/UpdateUser",
+                    {
+                        loginName:ename,
+                        email:email,
+                        mtel:mtel,
+                        token:token
+                    }, 
+                    function(res){
+                        //alert(res.success);
+                        if(res.success){
+                            alert("修改成功");  //此处建议修改为$.messager.alert()方法，请查阅帮助文档，自行修改。
+                        $("#updateuser_window").window("close");
+                        $("#dg").datagrid("reload");
+                        }                        
+                },"json");
+        }
+        //点击删除
+        function deleteInfo(index){
+            $.messager.confirm('确认','您确认想要删除记录吗？',function(r){    
+    if (r){ // 用户点击了确认按钮
+         var data = $("#dg").datagrid("getData"); //获取datagrid对应的json对象集合（再来一遍）。
+            var row = data.rows[index]; //获取第index行对应的json对象（再来一遍）。
+                $.post("http://stuapi.ysd3g.com/api/DeleteUser",
+                    {
+                        uid:row.Id, 
+                        token:token
+                    },function(deleteInfo){
+                        var deleteInfo=eval("("+deleteInfo+")");   //你知道这里可以如何修改从而变得更简单么？                 
+                        if(deleteInfo.success){
+                            alert("删除成功");
+                         $("#dg").datagrid("load");
+                        }
+                    }
+               );       
+    }    
+});
+                
+        }
     </script>
 	<table name="center" class="easyui-datagrid" id="dg" title="用户列表" style="width:300;height:400"
            data-options="rownumbers:true,singleSelect:true,pagination:true,method:'post',toolbar:'#usertb',pageSize:10">
@@ -88,9 +160,10 @@
                      <th data-options="field:'ProtectMTel',width:100,">手机号</th>
                      <th data-options="field:'IsLockout',width:100,">是否锁定</th>
                      <th data-options="field:'CreateTime',width:160,">创建时间</th>
-                     <th data-options="field:'LastLoginTime',width:160,">最后登录的时间</th>                
-                     <th data-options="field:'actionUpdate',width:300,title:'操作',formatter:formatterSetRight"></th>
-                </tr>
+                     <th data-options="field:'LastLoginTime',width:160,">最后登录的时间</th><th data-options="field:'setRoleAction',width:60,align:'center',formatter:formatterSetRole">角色</th>
+            <th data-options="field:'setUserAction',width:120,align:'center',formatter:formatterOPUser">操作</th>
+            <th data-options="field:'setPassword',width:80,align:'center',formatter:formatterResetPassword">操作</th>
+            <th data-options="field:'setLock',width:140,align:'center',formatter:formatterLockUser">用户操作</th>
             </thead>
          </table>
     
@@ -130,4 +203,33 @@
                 <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearUserForm()">取消</a>     
             </div>
     </div>
+
+    <div id="updateuser_window" class="easyui-window" title="修改员工信息" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:500px;height:300px;padding:10px;">
+         <form id="updateuserForm">
+                <table cellpadding="5">
+                    <tr>
+                        <td>用户名:</td>
+                        <td><input class="easyui-textbox" type="text" name="LoginName" readonly id="ename_1" data-options="required:true"></input></td>
+                    </tr>
+                    <tr>
+                        <td>密码:</td>
+                        <td><input class="easyui-textbox" type="password" id="pwd" name="pwd" data-options="required:true"></input></td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td><input class="easyui-textbox" type="text" name="ProtectEMail" id="email_1" data-options="required:true,validType:'email'"></input></td>
+                    </tr>
+               
+                    <tr>
+                        <td>手机号:</td>
+                        <td><input type="text" class="easyui-numberbox" id="mtel_1" name="ProtectMTel" data-options="required:true"></td>
+                    </tr>                   
+                </table>
+         </form>
+            <div style="text-align:center;padding:5px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="submitupdateUserForm()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeUserForm()">取消</a>       
+            </div>
+    </div>
+
     

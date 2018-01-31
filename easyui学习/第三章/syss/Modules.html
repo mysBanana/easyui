@@ -1,12 +1,118 @@
 <script type="text/javascript">
-    </script>
-      <div id="usert" style="padding:5px; height:auto">
-            <div style="margin-bottom:5px">
-                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addInfo()">新增</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                名称: <input class="easyui-textbox" id="userName" style="width:80px"><a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="searchUserInfo()">查找</a>
-            </div> 
-        </div>
-        <div class="easyui-panel" style="padding:5px">
-         <ul id="tt"  class="easyui-tree" data-options="url:'http://stuapi.ysd3g.com/api/GetAllModule?token=6339225d-b9fa-4cd9-817f-056c00db192d',animate:true"></ul>
-       </div>
+  var token="6339225d-b9fa-4cd9-817f-056c00db192d";
+  function deleteModule(){
+    var nodes = $('#treemenu').tree('getSelected');
+    console.log(nodes)
+    if(null==nodes){
+         $.messager.show({
+          title:'提示信息',
+          msg:'请选择节点!',
+          showType:'show'
+         })
+    }else{
+      $.post("http://stuapi.ysd3g.com/api/DeleteModule",
+      {
+        token:token,
+        mId:nodes.id
+      },function(res){
+            // if(res.success){
+            //   alert("删除成功")
+            //   $("#ttz").tree('remove',nodes.target)
+            // }
+      },"json"
+        )
+      }
+      }
     
+  
+  $(function(){
+    $('#treemenu').tree({
+        url: 'http://stuapi.ysd3g.com/api/GetAllModule?token='+token,
+        method: 'post',
+        animate: true,
+    });
+  })
+
+   function addModuleInfo(){
+            var nodes = $('#treemenu').tree('getSelected');    // get checked nodes
+            if(nodes!=null){
+                //将当前行数据填入表单
+                $("#parentModulename").text(nodes.text);
+                $("#addModule_window").window("open");
+            }else{
+                alert("请选择父节点！");
+            }
+        }
+
+        function submitModuleForm(){
+            var nodes = $('#treemenu').tree('getSelected');
+            var flag=$("#addModuleForm").form("validate");
+            var moduleName=$("#Modulename").val();
+            var weight=$("#Moduleweight").val();
+            var path=$("#ModuleUrl").val();
+            if(flag){
+                $.post("http://stuapi.ysd3g.com/api/CreateModule",
+                    {    
+                        name:moduleName,
+                        parentId: nodes.id, 
+                        path: path,
+                        weight: weight,
+                        token:token
+                    }, 
+                    function(res){
+                        //alert(res.message);
+                        if(res.success){
+                            alert("新增成功");
+                            $("#addModule_window").window("close");
+                            $('#treemenu').tree('reload')
+                        }                            
+                },"json");
+            }    
+        }
+
+       //点击新增取消按钮
+        function clearModuleForm(){
+            $('#addModuleForm').form('clear');
+            $("#addModule_window").window("close");
+        }  
+</script>
+      <div  style="padding:5px; height:auto">
+            <div style="margin-bottom:5px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addModuleInfo()">新增</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="updateModule()">修改</a>
+                <a  class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="deleteModule()">删除</a>
+            </div> 
+      </div>
+        <div class="easyui-panel" style="padding:5px">
+         <ul id="treemenu"></ul>
+       </div>
+
+    <!--新增表单-->
+  <div id="addModule_window" class="easyui-window" title="新增模块信息" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:500px;height:300px;padding:10px;">
+     <form id="addModuleForm">
+          <table cellpadding="5">
+            <tr>
+              <td>父节点名称:</td>
+              <td><div  id="parentModulename" ></div></td>
+            </tr>
+            
+            <tr>
+              <td>权重:</td>
+              <td><input class="easyui-numberbox" type="text" name="Moduleweight" id="Moduleweight" data-options="required:true"></input></td>
+            </tr>
+            <tr>
+              <td>URL:</td>
+              <td><input class="easyui-textbox" type="text" name="ModuleUrl" id="ModuleUrl" data-options="required:true"></input></td>
+            </tr>
+            <tr>
+              <td>模块名称:</td>
+              <td><input class="easyui-textbox" type="text" name="Modulename" id="Modulename" data-options="required:true"></input></td>
+            </tr>
+          </table>
+     </form>
+        <div style="text-align:center;padding:5px">
+          <a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="submitModuleForm()">保存</a>
+          <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearModuleForm()">取消</a>   
+        </div>
+  </div>
+  

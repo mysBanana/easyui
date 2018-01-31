@@ -13,10 +13,10 @@
            }); 
         });
 
-        function formatterSetRight(){
+        function formatterSetRight(value,row,index){
              return `<a href="javascript:void(0)">设置</a>
-                     <a href="javascript:void(0)">修改</a>
-                     <a href="javascript:void(0)">删除</a>
+                     <a href="javascript:void(0)" onclick="updateRoles(${index})">修改</a>
+                     <a href="javascript:void(0)" onclick="deleteInfo(${index})">删除</a>
              `
         }
         function addInfo(){
@@ -45,6 +45,54 @@
                 },"json");
             }
         }
+        function updateRoles(index){
+                 var data = $("#dgz").datagrid("getData");
+                 var row = data.rows[index];
+                $("#updaterolesForm").form("load",row);
+                $("#updateroles_window").window("open"); 
+        }
+        function submitupdateRolesForm(){
+                var name=$("#role_name").val();
+                var roleId=$("#roid").val()
+                 $.post(
+                    "http://stuapi.ysd3g.com/api/UpdateRole?token="+token,
+                    {
+                        roleId:roleId,
+                        name:name
+                    }, 
+                    function(res){
+                        //alert(res.success);
+                        if(res.success){
+                            alert("修改成功");  //此处建议修改为$.messager.alert()方法，请查阅帮助文档，自行修改。
+                        $("#updateroles_window").window("close");
+                        $("#dgz").datagrid("reload");
+                        }                        
+                },"json");
+        }
+        function closeRolesForm(){
+          $("#updateroles_window").window("close");
+        }
+        function deleteInfo(index){
+                      $.messager.confirm('确认','您确认想要删除记录吗？',function(r){    
+    if (r){ // 用户点击了确认按钮
+         var data = $("#dgz").datagrid("getData"); //获取datagrid对应的json对象集合（再来一遍）。
+            var row = data.rows[index]; //获取第index行对应的json对象（再来一遍）。
+              var data = $("#dgz").datagrid("getData"); //获取datagrid对应的json对象集合（再来一遍）。
+            var row = data.rows[index]; //获取第index行对应的json对象（再来一遍）。
+                $.post("http://stuapi.ysd3g.com/api/DeleteRole",
+                    {
+                        roleId:row.Id, 
+                        token:token
+                    },function(deleteInfo){
+                        var deleteInfo=eval("("+deleteInfo+")");   //你知道这里可以如何修改从而变得更简单么？                 
+                        if(deleteInfo.success){
+                            alert("删除成功");
+                         $("#dgz").datagrid("load");
+                        }
+                    }
+               );       
+    }
+        })}
     </script>
          <div id="usertbz" style="padding:5px; height:auto">
             <div style="margin-bottom:5px">
@@ -79,4 +127,19 @@
             </div>
     </div>
     
+    <div id="updateroles_window" class="easyui-window" title="修改员工信息" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:500px;height:300px;padding:10px;">
+         <form id="updaterolesForm">
+                <input type="hidden" name="Id" id="roid">
+                <table cellpadding="5">
+                    <tr>
+                        <td>管理名称:</td>
+                        <td><input class="easyui-textbox" type="text" name="Name"  id="role_name" data-options="required:true"></input></td>
+                    </tr>                  
+                </table>
+         </form>
+            <div style="text-align:center;padding:5px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" type="button" onclick="submitupdateRolesForm()">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeRolesForm()">取消</a>       
+            </div>
+    </div>
       
