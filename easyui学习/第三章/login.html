@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>登陆</title>
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/default/easyui.css">
+	 <script type="text/javascript" src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.min.js"></script>
+	 <script src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	 <script src="../easyui1.4.3/jquery-easyui-1.4.3/locale/easyui-lang-zh_CN.js"></script>
+	 <script>
+	 	function clear_from() {
+	 		$('#ff').form('clear')
+	 		}
+	 		function submitLoginForm() {
+	 		 var flag=$("#ff").form("validate");//使用validate验证表单的所有验证是否全部通过，通过为true，否则为false
+            var un=$("#un").val();//获取表单中的用户名
+            var pwd=$("#pwd").val();//获取用户密码
+            if (flag) {
+                 $.post('http://stuapi.ysd3g.com/api/login',
+                 {
+                 	un:un,
+                 	pwd:pwd,
+                 	token:'6339225d-b9fa-4cd9-817f-056c00db192d'
+                 },(e)=>{
+                    if(e.success){
+                        let message=JSON.parse(e.message);
+                        window.localStorage.setItem('userId',message.uid)
+                        window.localStorage.setItem('roleNames',message.roleNames)
+                    	window.location.href="main.html"
+                    }
+                    else{
+                    	alert(e.message)
+                    }
+                 },"json")
+            }
+            else{
+            	alert('请填写正确信息')
+            }
+	 		}
+	 </script>
+</head>
+<body>
+	<div style="margin:auto auto;width:400px;height: 240px;">
+	<div id="p" class="easyui-panel" title="欢迎登录"
+    style="width:500px;height:150px;padding:10px;background:#fafafa;"
+      >
+    <form id="ff" method="post">
+    <table>
+    	     <tr>
+                    <td>登录名:</td>
+                    <td><input class="easyui-textbox" type="text" name="un" id="un" data-options="required:true"></input></td>
+                </tr>              
+                <tr>
+                    <td>密&emsp;码:</td>
+                    <td><input class="easyui-textbox"  name="email" data-options="required:true" type="password" id="pwd"></input></td>
+                </tr> 
+                <tr>
+                	<td></td>
+                	<td>
+                		<a href="javascript:void(0)"
+                		data-options="iconCls:'icon-ok'"
+                		 class="easyui-linkbutton" type="button" onclick="submitLoginForm()">登录系统</a>
+                		<a href="javascript:void(0)"
+                		data-options="iconCls:'icon-cancel'"
+                		 class="easyui-linkbutton" type="button" onclick="clear_from()">清除输入</a>
+                	</td>
+                </tr>
+    </table>
+</form>
+</div>
+</div>
+</body>
+</html>

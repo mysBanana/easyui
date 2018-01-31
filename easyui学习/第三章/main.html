@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>管理页面</title>
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/icon.css">
+	<link rel="stylesheet" href="../easyui1.4.3/jquery-easyui-1.4.3/themes/default/easyui.css">
+	<script type="text/javascript" src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.min.js"></script>
+	<script src="../easyui1.4.3/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+	<script src="../easyui1.4.3/jquery-easyui-1.4.3/locale/easyui-lang-zh_CN.js"></script>
+    <script>
+	 	$(function(){
+        var userId=window.localStorage.getItem("userId");//获取登录页面中暂时存储的数据
+        var roleNames=window.localStorage.getItem("roleNames");//
+        var roleName=roleNames.split(",");//获取到的数据是字符串，使用逗号将其拆分，转化为对象
+        var token="6339225d-b9fa-4cd9-817f-056c00db192d";//申请到的数据密钥
+                    $.post("http://stuapi.ysd3g.com/api/GetSysRightsHtmlTreeString",{
+                        roleNames:roleName,//传递的参数
+                        treeUlId:"treeUlId",
+                        token:token
+                    },        
+                    function(res){
+                        $("#menuTree").html(res);
+                        $("#treeUlId").tree();
+                    }
+                );    
+        
+    });
+    //树状结构的节点是否已在中部显示
+    function navTab(re, html) {
+        var flag = $("#tt").tabs('exists', re);
+        $('#treeUlId').tree({
+            onSelect:function(node){
+                var isLeaf = $('#treeUlId').tree('isLeaf',node.target);
+                if (isLeaf) {
+                	console.log(html)
+                    if(!flag) {
+                        $('#tt').tabs('add', {
+                            title: re,
+                            closable: true,
+                            href: html
+                        });
+                    } else {
+                        $("#tt").tabs('select', re);
+                    }
+                }
+            }
+        });
+    }
+	 </script>
+</head>
+<body>
+	<div style="margin:20px 0;"></div>
+    <div class="easyui-layout" style="width:100%;height:700px;">
+        <div data-options="region:'north'" style="height:50px"><h2>云时代欢迎您！</h2></div>
+        <div data-options="region:'south',split:true" style="height:50px;"></div>
+        <!--<div data-options="region:'east',split:true" title="East" style="width:100px;"></div>-->
+        <div data-options="region:'west',split:true" title="导航应用" style="width:150px;">
+           <div id="menuTree" ><!--这个地方显示树桩结构-->
+             
+           </div>
+        </div>
+        <div id="centerTabs" data-options="region:'center',iconCls:'icon-ok'" style="width: 530px;">
+            <div id="tt" class="easyui-tabs"> <!--这个地方采用tabs控件进行布局-->
+             
+            </div>
+        </div>
+    </div>
+</body>
+</html>
